@@ -1,9 +1,13 @@
 from flask import Flask, jsonify
-from config import SECRET_KEY, SQLALCHEMY_DATABASE_URI, SQLALCHEMY_TRACK_MODIFICATIONS
+from config import (
+    SECRET_KEY, JWT_SECRET_KEY, JWT_ACCESS_TOKEN_EXPIRES,
+    SQLALCHEMY_DATABASE_URI, SQLALCHEMY_TRACK_MODIFICATIONS
+)
 from flask_jwt_extended import JWTManager
 from database import db
 from models import User
 from werkzeug.security import generate_password_hash
+from flask_cors import CORS
 
 from routes.auth import auth_bp
 from routes.admin import admin_bp
@@ -15,8 +19,19 @@ from routes.bookings import bookings_bp
 app = Flask(__name__)
 
 app.config['SECRET_KEY'] = SECRET_KEY
+app.config['JWT_SECRET_KEY'] = JWT_SECRET_KEY
+app.config['JWT_ACCESS_TOKEN_EXPIRES'] = JWT_ACCESS_TOKEN_EXPIRES
 app.config['SQLALCHEMY_DATABASE_URI'] = SQLALCHEMY_DATABASE_URI
 app.config['SQLALCHEMY_TRACK_MODIFICATIONS'] = SQLALCHEMY_TRACK_MODIFICATIONS
+
+CORS(
+    app,
+    resources={
+        r"/api/*": {
+            "origins": ["http://localhost:5173", "http://127.0.0.1:5173"]
+        }
+    }
+)
 
 db.init_app(app)
 jwt = JWTManager(app)

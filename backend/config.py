@@ -1,9 +1,19 @@
-SECRET_KEY = "1039e95c8b838e4d47196e6508bd0fb3fb5772fec19807218dc32d98141e4960"
+import os
 
-SQLALCHEMY_DATABASE_URI = "sqlite:///trek.db"
+SECRET_KEY = os.getenv(
+    "FLASK_SECRET_KEY",
+    "development-secret-key-change-before-deployment"
+)
+
+JWT_SECRET_KEY = os.getenv(
+    "JWT_SECRET_KEY",
+    "development-jwt-secret-change-before-deployment"
+)
+
+SQLALCHEMY_DATABASE_URI = os.getenv(
+    "DATABASE_URL",
+    "sqlite:///trek.db"
+)
 
 SQLALCHEMY_TRACK_MODIFICATIONS = False
-
-JWT_SECRET_KEY = "dev-jwt-secret-key-change-later"
-
-JWT_ACCESS_TOKEN_EXPIRES = 3600
+JWT_ACCESS_TOKEN_EXPIRES = int(os.getenv("JWT_ACCESS_TOKEN_EXPIRES", "3600"))
